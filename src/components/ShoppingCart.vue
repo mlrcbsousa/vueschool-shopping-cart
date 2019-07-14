@@ -4,21 +4,38 @@
     <ul>
       <li v-for="product in products" :key="product.id">
         {{ product.title }} -
-        {{ product.price }} -
+        {{ product.price | currency }} -
         {{ product.quantity }}
       </li>
     </ul>
+    <p>Total: {{ total | currency }}</p>
+    <button @click="checkout">Checkout</button>
+    <p v-if="checkoutStatus">{{ checkoutStatus }}</p>
   </div>
 </template>
 
 <script>
+  import { mapState, mapGetters, mapActions } from "vuex";
+
   export default {
     computed: {
-      products() {
-        return this.$store.getters.cartProducts
-      }
+      ...mapState('cart', {
+        checkoutStatus: state => state.checkoutStatus
+      }),
+
+      ...mapGetters('cart', {
+        products: 'cartProducts',
+        total: 'cartTotal'
+      }),
+      // can call as many times as you want with diferent namespace
+      // ...mapGetters('products', {
+      //   productIsInStock: 'productIsInStock'
+      // })
     },
 
+    methods: {
+      ...mapActions('cart', ['checkout'])
+    },
   }
 </script>
 
